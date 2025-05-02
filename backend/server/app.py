@@ -7,9 +7,21 @@ base_kwargs = {}
 
 # https://connexion.readthedocs.io/en/latest/quickstart.html
 def test_client(client):
+    # https://www.starlette.io/responses/
+    response = client.post(
+      "/authenticate",
+      params = {"username" : "Tom", "password_hash" : "134"}
+    )
+    
+    print(response.content.decode('UTF-8'))
 
-    response = client.post("/greeting/joe")
-    print("le status code est ", response.status_code)
+    # test avec un bon mot de passe
+    response = client.post(
+      "/authenticate",
+      params = {"username" : "Kai", "password_hash" : "5678"}
+    )
+    
+    print(response.content.decode('UTF-8'))
 
 app = FlaskApp(__name__)
 
@@ -33,8 +45,9 @@ if __name__ == "__main__":
 
     if testClient:
         with app.test_client(**base_kwargs) as client:
-            print(f"{bcolors.BOLD + bcolors.OKCYAN}\nRunning the test client")
+            print(f"{bcolors.BOLD + bcolors.OKCYAN}\nRunning the test client...\n{bcolors.ENDC}")
             test_client(client)
 
 else:
+    # unsure if we should do that here insteade of running uvicorn outside of the script
     app.run(f"{Path(__file__).stem}:app")
