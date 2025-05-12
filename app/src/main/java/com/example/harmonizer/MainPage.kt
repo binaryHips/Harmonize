@@ -29,68 +29,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
+
 @Composable
-fun LoginPage(modifier: Modifier = Modifier) {
+fun MainPage(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+        .fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.background_image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
 
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(32.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+                .padding(3.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                var username by remember { mutableStateOf("") }
-                var password by remember { mutableStateOf("") }
+            Spacer(modifier = Modifier.height(5.dp))
 
 
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Username") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        Color(0xFFF0F0F0)  // light gray background
-                    )
-                )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        Color(0xFFF0F0F0)  // light gray background
-                    )
-                )
-            }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
                     onClick = { /* Handle login */ },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    Text("Login", fontSize = 18.sp)
+                    Text("New Harmonization", fontSize = 18.sp)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -99,7 +63,14 @@ fun LoginPage(modifier: Modifier = Modifier) {
                     onClick = { /* Handle account creation */ },
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
-                    Text("Create Account", fontSize = 18.sp)
+                    Text("  Gallery  ", fontSize = 18.sp)
+                }
+
+                Button(
+                    onClick = { /* Handle account creation */ },
+                    modifier = Modifier.padding(bottom = 32.dp)
+                ) {
+                    Text("Account Settings", fontSize = 18.sp)
                 }
             }
         }
@@ -108,8 +79,8 @@ fun LoginPage(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginPreview() {
+fun MainPreview() {
     HarmonizerTheme {
-        LoginPage()
+        MainPage()
     }
 }
