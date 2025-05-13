@@ -18,6 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
 /*
@@ -40,7 +45,32 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PhotoGalleryScreen()
+            //PhotoGalleryScreen()
+            AppNavigator()
+        }
+    }
+}
+
+@Composable
+fun AppNavigator() {
+    val navController = rememberNavController()
+
+    NavHost(navController, startDestination = "gallery") {
+        composable("gallery") {
+            PhotoGalleryScreen(navController)
+        }
+        composable(
+            "detail/{photoUrl}/{title}/{date}",
+            arguments = listOf(
+                navArgument("photoUrl") { type = NavType.StringType },
+                navArgument("title") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("photoUrl") ?: ""
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            PhotoDetailScreen(url, title, date, navController)
         }
     }
 }

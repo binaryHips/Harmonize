@@ -1,7 +1,9 @@
 package com.example.harmonizer
 
 import android.media.Image
+import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -29,24 +31,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
 
 @Composable
-fun PhotoGalleryScreen(viewModel: GalleryViewModel = viewModel()) {
+fun PhotoGalleryScreen(navController: NavController, viewModel: GalleryViewModel = viewModel()) {
     val photos by viewModel.photos.collectAsState()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(horizontal = 2.dp, vertical = 60.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
+    LazyVerticalGrid(columns = GridCells.Fixed(3), contentPadding = PaddingValues(8.dp)) {
         items(photos) { photo ->
-
             Column(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
+                    .padding(horizontal = 3.dp, vertical = 40.dp)
+                    .clickable {
+                        val encodedUrl = Uri.encode(photo.url)
+                        val encodedTitle = Uri.encode(photo.title)
+                        val encodedDate = Uri.encode(photo.date)
+                        navController.navigate("detail/$encodedUrl/$encodedTitle/$encodedDate")
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
@@ -58,26 +61,18 @@ fun PhotoGalleryScreen(viewModel: GalleryViewModel = viewModel()) {
                         .clip(RoundedCornerShape(8.dp))
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = photo.title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = photo.date,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
-                )
+                Text(photo.title, style = MaterialTheme.typography.bodyMedium)
+                Text(photo.date, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
             }
         }
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun GallPreview() {
     HarmonizerTheme {
-        PhotoGalleryScreen()
+        //PhotoGalleryScreen(navController)
     }
 }
