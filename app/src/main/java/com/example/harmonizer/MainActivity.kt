@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
+/*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,12 +28,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             HarmonizerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginPage(modifier = Modifier.padding(innerPadding))
+                    Gallery(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
+*/
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            PhotoGalleryScreen()
+        }
+    }
+}
+
 
 
 
