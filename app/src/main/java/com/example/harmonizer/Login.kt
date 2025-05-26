@@ -34,7 +34,7 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 fun LoginPage(modifier: Modifier = Modifier) {
 
     val navController = (LocalActivity.current as MainActivity).navController
-
+    val client = (LocalActivity.current as MainActivity).client
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -45,6 +45,9 @@ fun LoginPage(modifier: Modifier = Modifier) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+
+        var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
 
         Column(
             modifier = modifier
@@ -61,8 +64,7 @@ fun LoginPage(modifier: Modifier = Modifier) {
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var username by remember { mutableStateOf("") }
-                var password by remember { mutableStateOf("") }
+
 
 
                 OutlinedTextField(
@@ -91,7 +93,7 @@ fun LoginPage(modifier: Modifier = Modifier) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
-                    onClick = { navController.navigate(Screen.Main) },
+                    onClick = { onLoginButtonClicked(client, password, username) },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
                     Text("Login", fontSize = 18.sp)
@@ -108,6 +110,11 @@ fun LoginPage(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+fun onLoginButtonClicked(client: Client, password: String, username:String){
+    client.requestToken(username, password)
+    //navController.navigate(Screen.Main)
 }
 
 @Preview(showBackground = true)

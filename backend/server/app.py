@@ -8,7 +8,7 @@ base_kwargs = {}
 # https://connexion.readthedocs.io/en/latest/quickstart.html
 def test_client(client):
     # https://www.starlette.io/responses/
-    response = client.post(
+    response = client.get(
       "/authenticate",
       params = {"username" : "Tom", "password_hash" : "134"}
     )
@@ -16,7 +16,7 @@ def test_client(client):
     print(response.content.decode('UTF-8'))
 
     # test avec un bon mot de passe
-    response = client.post(
+    response = client.get(
       "/authenticate",
       params = {"username" : "Kai", "password_hash" : "5678"}
     )

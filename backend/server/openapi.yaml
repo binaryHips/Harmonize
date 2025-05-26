@@ -9,10 +9,6 @@ paths:
       responses:
         '200':
           description: "Connexion de l'utilisateur"
-          content:
-            text/plain:
-              schema:
-                type: string
       parameters:
         - name: username
           in: query

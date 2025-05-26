@@ -22,15 +22,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
-/*
+
 class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
-
     val client = Client();
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,8 +40,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-*/
 
+
+/*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +50,7 @@ class MainActivity : ComponentActivity() {
             PhotoGalleryScreen()
         }
     }
-}
+}*/
 
 
 
