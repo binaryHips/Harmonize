@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -28,35 +30,40 @@ import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PhotoDetailScreen(photoUrl: String, title: String, date: String, navController: NavController) {
+fun PhotoDetailScreen(photo: PhotoItem, navController: NavController, viewModel: GalleryViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Photo Details") },
+                title = { Text("Photo Details") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.deletePhotoById(photo.id)
+                        navController.popBackStack()
+                    }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete Photo")
                     }
                 }
             )
         }
-    ) { paddingValues ->
+    ) { padding ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(padding)
                 .fillMaxSize()
                 .background(Color.Black)
-                .padding(horizontal = 60.dp, vertical = 60.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(title, style = MaterialTheme.typography.headlineSmall, color = Color.White)
-            Text(date, style = MaterialTheme.typography.labelMedium, color = Color.LightGray)
+            Text(photo.title, style = MaterialTheme.typography.headlineSmall, color = Color.White)
+            Text(photo.date, style = MaterialTheme.typography.labelMedium, color = Color.LightGray)
             Spacer(modifier = Modifier.height(16.dp))
             Image(
-                painter = rememberAsyncImagePainter(photoUrl),
+                painter = rememberAsyncImagePainter(photo.url),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
@@ -73,11 +80,15 @@ fun PhotoDetailScreen(photoUrl: String, title: String, date: String, navControll
             }
 
             Button(
-                onClick = { /* Handle delete */ },
+                onClick = {
+                    viewModel.deletePhotoById(photo.id)
+                    navController.popBackStack()
+                },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
                 Text("Delete", fontSize = 18.sp)
             }
+
 
         }
 

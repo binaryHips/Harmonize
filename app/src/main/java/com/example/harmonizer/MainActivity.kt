@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,6 +48,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             //PhotoGalleryScreen()
             AppNavigator()
+            //LoginPage()
+
         }
     }
 }
@@ -54,26 +57,25 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigator() {
     val navController = rememberNavController()
+    val viewModel: GalleryViewModel = viewModel() // shared instance
 
     NavHost(navController, startDestination = "gallery") {
         composable("gallery") {
-            PhotoGalleryScreen(navController)
+            //PhotoGalleryScreen(navController, viewModel)
         }
         composable(
-            "detail/{photoUrl}/{title}/{date}",
-            arguments = listOf(
-                navArgument("photoUrl") { type = NavType.StringType },
-                navArgument("title") { type = NavType.StringType },
-                navArgument("date") { type = NavType.StringType }
-            )
+            "detail/{photoId}",
+            arguments = listOf(navArgument("photoId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("photoUrl") ?: ""
-            val title = backStackEntry.arguments?.getString("title") ?: ""
-            val date = backStackEntry.arguments?.getString("date") ?: ""
-            PhotoDetailScreen(url, title, date, navController)
+            val photoId = backStackEntry.arguments?.getInt("photoId") ?: return@composable
+            val photo = viewModel.photos.collectAsState().value.find { it.id == photoId }
+            if (photo != null) {
+                PhotoDetailScreen(photo, navController, viewModel)
+            }
         }
     }
 }
+
 
 
 
