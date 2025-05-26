@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
+/*
 class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
@@ -41,6 +42,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+*/
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            PhotoGalleryScreen()
+        }
+    }
+}
+
 
 
 
