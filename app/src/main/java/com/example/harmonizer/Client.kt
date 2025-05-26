@@ -70,7 +70,6 @@ class Client {
             }
         )
     }
-
 }
 /* fun runPostApi() {
  var url = "https://reqres.in/api/users"

@@ -25,6 +25,9 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
+
+    val client = Client();
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
 

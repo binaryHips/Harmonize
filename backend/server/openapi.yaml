@@ -4,11 +4,11 @@ info:
   version: 0.0.1
 paths:
   /authenticate:
-    post:
+    get:
       operationId: routes.authenticate
       responses:
         '200':
-          description: "Connexion de l'utilisatuer"
+          description: "Connexion de l'utilisateur"
           content:
             text/plain:
               schema:
@@ -24,3 +24,5 @@ paths:
           required: true
           schema:
             type: string
+
+
