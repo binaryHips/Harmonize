@@ -33,6 +33,7 @@ class Client {
     private fun sendGet(path:String, params:Map<String, String>, callbackObject: Callback){
 
         val builder = HttpUrl.Builder()
+            .scheme("http")
             .host(host_url)
             .addPathSegment(path)
             .addQueryParameter("token", authToken)
@@ -41,7 +42,6 @@ class Client {
             entry ->
             builder.addQueryParameter(entry.key, entry.value)
         }
-        builder.build()
 
         var request = Request.Builder().url(builder.build())
             .build()
