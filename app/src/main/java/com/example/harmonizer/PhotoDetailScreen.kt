@@ -63,7 +63,7 @@ fun PhotoDetailScreen(photo: PhotoItem, navController: NavController, viewModel:
             Text(photo.date, style = MaterialTheme.typography.labelMedium, color = Color.LightGray)
             Spacer(modifier = Modifier.height(16.dp))
             Image(
-                painter = rememberAsyncImagePainter(photo.url),
+                painter = rememberAsyncImagePainter(photo.uri),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier

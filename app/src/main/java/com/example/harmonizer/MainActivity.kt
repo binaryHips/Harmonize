@@ -1,5 +1,8 @@
 package com.example.harmonizer
 
+import android.app.Application
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -44,6 +49,12 @@ class MainActivity : ComponentActivity() {
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.READ_MEDIA_IMAGES), 1)
+            }
+        }
+
         super.onCreate(savedInstanceState)
         setContent {
             //PhotoGalleryScreen()
@@ -54,14 +65,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun AppNavigator() {
     val navController = rememberNavController()
-    val viewModel: GalleryViewModel = viewModel() // shared instance
+    val context = LocalContext.current
+    val viewModel: GalleryViewModel = viewModel(
+        factory = GalleryViewModelFactory(context.applicationContext as Application)
+    )
 
     NavHost(navController, startDestination = "gallery") {
         composable("gallery") {
-            //PhotoGalleryScreen(navController, viewModel)
+            PhotoGalleryScreen(navController, viewModel)
         }
         composable(
             "detail/{photoId}",
@@ -75,6 +90,7 @@ fun AppNavigator() {
         }
     }
 }
+
 
 
 
