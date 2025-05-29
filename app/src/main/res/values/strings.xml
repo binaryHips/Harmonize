@@ -2,4 +2,12 @@
     <string name="app_name">Harmonizer</string>
     <string name="login_page_title">Login</string>
     <string name="main_page_title">Home</string>
+
+
+    <string name="error_message">Server Error</string>
+    <string name="username_error_message">Username should have 6-15 characters</string>
+    <string name="password_error_message">password should have 8-20 characters</string>
+    <string name="loading_page_title" />
+    <string name="please_wait_message">Please wait a few seconds</string>
+    <string name="photo_gallery_title">Gallery</string>
 </resources>

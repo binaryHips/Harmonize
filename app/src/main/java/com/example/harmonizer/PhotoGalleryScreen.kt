@@ -1,6 +1,7 @@
 package com.example.harmonizer
 
 import android.media.Image
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,7 +36,7 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 @Composable
 fun PhotoGalleryScreen(viewModel: GalleryViewModel = viewModel()) {
     val photos by viewModel.photos.collectAsState()
-
+    
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         contentPadding = PaddingValues(horizontal = 2.dp, vertical = 60.dp),

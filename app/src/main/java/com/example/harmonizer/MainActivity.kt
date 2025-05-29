@@ -26,10 +26,10 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
-    val client = Client();
+    lateinit var client:Client
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        client = Client(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {

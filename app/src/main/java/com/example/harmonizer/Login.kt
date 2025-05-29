@@ -39,12 +39,7 @@ fun LoginPage(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.background_image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+
 
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
@@ -102,7 +97,7 @@ fun LoginPage(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { /* Handle account creation */ },
+                    onClick = { onRegisterButtonClicked(client, password, username) },
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     Text("Create Account", fontSize = 18.sp)
@@ -114,7 +109,10 @@ fun LoginPage(modifier: Modifier = Modifier) {
 
 fun onLoginButtonClicked(client: Client, password: String, username:String){
     client.requestToken(username, password)
-    //navController.navigate(Screen.Main)
+}
+
+fun onRegisterButtonClicked(client:Client, password: String, username: String){
+    client.requestCreateAccount(username, password)
 }
 
 @Preview(showBackground = true)

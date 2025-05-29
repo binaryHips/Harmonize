@@ -1,5 +1,6 @@
 package com.example.harmonizer
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
+    val navController = (LocalActivity.current as MainActivity).navController
     Box(
         modifier = Modifier
         .fillMaxSize()
@@ -51,19 +53,21 @@ fun MainPage(modifier: Modifier = Modifier) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
-                    onClick = { /* Handle login */ },
-                    modifier = Modifier.padding(top = 16.dp)
+                    onClick = {  },
+                    modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
                 ) {
                     Text("New Harmonization", fontSize = 18.sp)
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+
 
                 Button(
-                    onClick = { /* Handle account creation */ },
-                    modifier = Modifier.padding(bottom = 32.dp)
+                    onClick = {
+                        navController.navigate(Screen.PhotoGallery)
+                    },
+                    modifier = Modifier.padding(bottom = 86.dp)
                 ) {
-                    Text("  Gallery  ", fontSize = 18.sp)
+                    Text(" Harmonizer Gallery  ", fontSize = 18.sp)
                 }
 
                 Button(

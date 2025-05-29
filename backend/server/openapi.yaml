@@ -21,4 +21,21 @@ paths:
           schema:
             type: string
 
+  /createAccount:
+    post:
+      operationId: routes.createAccount
+      responses:
+        '200':
+          description: "Créationdu compte de l'utilisateur"
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password_hash
+          in: query
+          required: true
+          schema:
+            type: string
 

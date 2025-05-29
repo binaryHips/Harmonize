@@ -1,13 +1,22 @@
 
+import db
 
-database = {
-    "Tom" : "1234",
-    "Kai" : "5678"
-}
-
+# routes
 
 def authenticate(username: str, password_hash: str):
-    if username in database.keys() and database[username] == password_hash:
-        return "Bienvenue " + username
+    if db.validateUser(username, password_hash):
+
+        userToken = db.createNewToken(username)
+
+        return userToken, 200
     else:
-        return "Mauvais mot de passe : " + password_hash
+        return "Wrong Password", 510
+    
+def createAccount(username: str, password_hash: str):
+    if db.addUser(username,password_hash):
+        
+        userToken = db.createNewToken(username)
+
+        return userToken, 200
+    else:
+        return "User already exists", 510

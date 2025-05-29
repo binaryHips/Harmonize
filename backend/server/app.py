@@ -2,8 +2,10 @@ from connexion import FlaskApp #pip ->  connexion, connexion[flask] et connexion
 from pathlib import Path
 
 # launches the app from this script and sets up the test client in the next funcion
-testClient = True
-base_kwargs = {}
+testClient = False
+ip_adress = "192.168.1.70" #ip de l'appareil dans la box.
+port = 3000 #pas oublier d'ouvrir le port dans le pare feu ET de le forward
+            # dans la box pour pouvoir y accéder par l'ipv4 statique
 
 # https://connexion.readthedocs.io/en/latest/quickstart.html
 def test_client(client):
@@ -47,11 +49,11 @@ if __name__ == "__main__":
 
 
   if testClient:
-    with app.test_client(**base_kwargs) as client:
+    with app.test_client() as client:
       print(f"{bcolors.BOLD + bcolors.OKCYAN}\nRunning the test client...\n{bcolors.ENDC}")
       test_client(client)
 
   else:
     # unsure if we should do that here insteade of running uvicorn outside of the script
     print(f"{bcolors.BOLD + bcolors.OKCYAN}\nRunning the server...\n{bcolors.ENDC}")
-    app.run(f"{Path(__file__).stem}:app")
+    app.run(f"{Path(__file__).stem}:app", port=port, host = ip_adress)

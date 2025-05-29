@@ -43,7 +43,7 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarContent(name:String = "unnamed page") {
+fun TopBarContent(name:String = "unnamed page", showBackArrow:Boolean) {
 
     val navController = (LocalActivity.current as MainActivity).navController
 
@@ -57,10 +57,12 @@ fun TopBarContent(name:String = "unnamed page") {
             containerColor = Color.Transparent
         ),
         navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+            if (showBackArrow) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                }
             }
         })
 }
@@ -69,9 +71,15 @@ fun TopBarContent(name:String = "unnamed page") {
 sealed class Screen(@StringRes val title: Int, val showBackArrow: Boolean = true) {
 
     @kotlinx.serialization.Serializable
-    data object Login : Screen(R.string.login_page_title)
+    data object Login : Screen(R.string.login_page_title, showBackArrow = false)
     @kotlinx.serialization.Serializable
     data object Main : Screen(R.string.main_page_title, showBackArrow = false)
+
+    @kotlinx.serialization.Serializable
+    data object Loading : Screen(R.string.loading_page_title, showBackArrow = false)
+
+    @kotlinx.serialization.Serializable
+    data object PhotoGallery : Screen(R.string.photo_gallery_title, showBackArrow = true)
 }
 
 
@@ -79,12 +87,14 @@ sealed class Screen(@StringRes val title: Int, val showBackArrow: Boolean = true
 @Composable
 fun TopBar(navController:NavHostController){
     val backStackEntry by navController.currentBackStackEntryAsState()
-    //val currentRoute by remember { derivedStateOf { currentBackStackEntry?.destination?.route ?: "Home" } }
+
     val currentScreen = remember {
         derivedStateOf {
             backStackEntry?.destination?.let {
                 when (it.route) {
                     Screen.Login::class.qualifiedName -> Screen.Login
+                    Screen.Main::class.qualifiedName -> Screen.Main
+                    Screen.PhotoGallery::class.qualifiedName -> Screen.PhotoGallery
 
 
                     else -> Screen.Main
@@ -100,7 +110,10 @@ fun TopBar(navController:NavHostController){
             contentScale = ContentScale.FillHeight
         ),
         containerColor = Color.Transparent,
-        topBar = { TopBarContent( LocalActivity.current!!.getString(currentScreen.value.title)) }
+        topBar = { TopBarContent(
+            LocalActivity.current!!.getString(currentScreen.value.title),
+            currentScreen.value.showBackArrow
+        ) }
     ) { paddingvalues ->
 
         Surface(
@@ -112,6 +125,8 @@ fun TopBar(navController:NavHostController){
             NavHost(navController = navController, startDestination = Screen.Login) {
                 composable<Screen.Login> { LoginPage( /* ... */ ) }
                 composable<Screen.Main> { MainPage( /* ... */ ) }
+                composable<Screen.Loading> { LoadingPage( /* ... */ ) }
+                composable<Screen.PhotoGallery> { PhotoGalleryScreen ( ) }
                 // Add more destinations similarly.
             }
         }
