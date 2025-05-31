@@ -44,11 +44,12 @@ class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
     lateinit var client:Client
-    val gallery: GalleryViewModel = GalleryViewModel() // shared instance
+    lateinit var gallery: GalleryViewModel // shared instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        client = Client(this)
         super.onCreate(savedInstanceState)
+        client = Client(this)
+        gallery = GalleryViewModel(application)
         enableEdgeToEdge()
         setContent {
             HarmonizerTheme {

@@ -53,7 +53,7 @@ class Client {
 
     val client = OkHttpClient()
 
-    lateinit var activity: MainActivity // reference to current activity
+    var activity: MainActivity // reference to current activity
 
     constructor (activity: MainActivity){
         this.activity = activity

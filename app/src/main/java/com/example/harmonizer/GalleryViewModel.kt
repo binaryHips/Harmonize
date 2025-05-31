@@ -19,7 +19,7 @@ import androidx.lifecycle.AndroidViewModel
 import java.sql.Date
 import java.util.Locale
 
-@kotlinx.serialization.Serializable
+
 data class PhotoItem(
     val id: Int,
     val uri: Uri,
