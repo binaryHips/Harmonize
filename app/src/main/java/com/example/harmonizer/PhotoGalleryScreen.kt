@@ -52,9 +52,6 @@ fun PhotoGalleryScreen() {
                 modifier = Modifier
                     .padding(horizontal = 3.dp, vertical = 40.dp)
                     .clickable {
-                        val encodedUrl = Uri.encode(photo.url)
-                        val encodedTitle = Uri.encode(photo.title)
-                        val encodedDate = Uri.encode(photo.date)
                         //navController.navigate("detail/$encodedUrl/$encodedTitle/$encodedDate")
                         navController.navigate(Screen.PhotoVisualizer(photo.id))
 
@@ -62,7 +59,7 @@ fun PhotoGalleryScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = rememberAsyncImagePainter(photo.url),
+                    painter = rememberAsyncImagePainter(photo.uri),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -77,11 +74,3 @@ fun PhotoGalleryScreen() {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun GallPreview() {
-    HarmonizerTheme {
-        //PhotoGalleryScreen(navController)
-    }
-}
