@@ -21,12 +21,26 @@ paths:
           schema:
             type: string
 
+  /validateToken:
+    get:
+      operationId: routes.validateToken
+      responses:
+        '200':
+          description: "Connexion de l'utilisateur"
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+
+
   /createAccount:
     post:
       operationId: routes.createAccount
       responses:
         '200':
-          description: "Créationdu compte de l'utilisateur"
+          description: "Création du compte de l'utilisateur"
       parameters:
         - name: username
           in: query

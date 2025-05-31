@@ -1,6 +1,6 @@
 from connexion import FlaskApp #pip ->  connexion, connexion[flask] et connexion[uvicorn]
 from pathlib import Path
-
+#in caseit crashes https://stackoverflow.com/questions/8688949/how-to-close-tcp-and-udp-ports-via-windows-command-line
 # launches the app from this script and sets up the test client in the next funcion
 testClient = False
 ip_adress = "192.168.1.70" #ip de l'appareil dans la box.
