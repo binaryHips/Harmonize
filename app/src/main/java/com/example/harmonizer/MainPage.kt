@@ -34,6 +34,7 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
     val navController = (LocalActivity.current as MainActivity).navController
+
     Box(
         modifier = Modifier
         .fillMaxSize()
@@ -53,7 +54,7 @@ fun MainPage(modifier: Modifier = Modifier) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
-                    onClick = {  },
+                    onClick = { navController.navigate(Screen.Harmonize()) },
                     modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
                 ) {
                     Text("New Harmonization", fontSize = 18.sp)

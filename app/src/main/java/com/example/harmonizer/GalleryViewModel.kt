@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+@kotlinx.serialization.Serializable
 data class PhotoItem(
     val id: Int,
     val url: String,

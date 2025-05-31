@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController
     lateinit var client:Client
+    val gallery: GalleryViewModel = GalleryViewModel() // shared instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         client = Client(this)
@@ -54,34 +55,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             //PhotoGalleryScreen()
-            AppNavigator()
+            //AppNavigator()
             //LoginPage()
+
 
         }
     }
 }*/
 
-@Composable
-fun AppNavigator() {
-    val navController = rememberNavController()
-    val viewModel: GalleryViewModel = viewModel() // shared instance
 
-    NavHost(navController, startDestination = "gallery") {
-        composable("gallery") {
-            //PhotoGalleryScreen(navController, viewModel)
-        }
-        composable(
-            "detail/{photoId}",
-            arguments = listOf(navArgument("photoId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val photoId = backStackEntry.arguments?.getInt("photoId") ?: return@composable
-            val photo = viewModel.photos.collectAsState().value.find { it.id == photoId }
-            if (photo != null) {
-                PhotoDetailScreen(photo, navController, viewModel)
-            }
-        }
-    }
-}
 
 
 

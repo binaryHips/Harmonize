@@ -1,16 +1,21 @@
 package com.example.harmonizer
 
+import android.media.Image
 import android.util.Log
 import android.widget.Toast
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
 import okhttp3.HttpUrl
+import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
 import okio.IOException
+import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -59,7 +64,7 @@ class Client {
         Log.d("HTTP_CLIENT", "starting authToken : $authToken")
     }
 
-    private fun sendGet(path:String, params:Map<String, String>, callbackObject: Callback){
+    private fun sendGet(path:String, params:Map<String, String>?, callbackObject: Callback){
 
         val builder = HttpUrl.Builder()
             .scheme("http")
@@ -68,7 +73,7 @@ class Client {
             .addPathSegment(path)
             .addQueryParameter("token", authToken)
 
-        params.forEach{
+        params?.forEach{
             entry ->
             builder.addQueryParameter(entry.key, entry.value)
         }
@@ -79,7 +84,7 @@ class Client {
         client.newCall(request).enqueue(callbackObject)
     }
 
-    private fun sendPost(path:String, params:Map<String, String>, body: RequestBody? , callbackObject: Callback){
+    private fun sendPost(path:String, params:Map<String, String>?, body: RequestBody? , callbackObject: Callback){
 
         val builder = HttpUrl.Builder()
             .scheme("http")
@@ -88,7 +93,7 @@ class Client {
             .addPathSegment(path)
             .addQueryParameter("token", authToken)
 
-        params.forEach{
+        params?.forEach{
                 entry ->
             builder.addQueryParameter(entry.key, entry.value)
         }
@@ -244,6 +249,66 @@ class Client {
                     activity.runOnUiThread {
                         Log.d("HTTP_CLIENT", "Created account : $name")
                         Log.d("HTTP_CLIENT", "Connected with token : $authToken")
+                        activity.navController.navigate(Screen.Main)
+                    }
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+
+                    activity.runOnUiThread {
+                        activity.navController.navigate(Screen.Login)
+                        Toast.makeText(
+                            activity,
+                            activity.getString(R.string.error_message) + "\n" + e.message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    Log.d("HTTP_CLIENT", "HTTP response: ${e.message}")
+                }
+            }
+        )
+    }
+
+    fun requestImageHarmonization(image:PhotoItem){
+
+        activity.navController.navigate(Screen.Loading)
+
+        val file = File(" ")
+
+        val body = file.asRequestBody()
+
+
+        sendPost(
+            "createAccount",
+            null,
+            body
+            ,
+            object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code != 200 /*network authentication required*/){
+                        val errMessage = (response.body?.string() ?: response.message)
+                        activity.runOnUiThread {
+                            activity.navController.navigate(Screen.Login)
+                            Toast.makeText(
+                                activity,
+                                activity.getString(R.string.error_message) + "\n" + errMessage,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        response.close()
+                        return
+                    }
+                    // else
+
+                    authToken = response.body?.string() ?: ""
+                    response.close()
+                    val sharedPref = activity.getSharedPreferences("client", 0) ?: return
+                    with (sharedPref.edit()) {
+                        putString("AUTH_TOKEN", authToken)
+                        apply()
+                    }
+                    activity.runOnUiThread {
+                        Log.d("HTTP_CLIENT", "Harmonized image")
                         activity.navController.navigate(Screen.Main)
                     }
                 }

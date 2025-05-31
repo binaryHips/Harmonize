@@ -1,5 +1,6 @@
 package com.example.harmonizer
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,20 +27,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PhotoDetailScreen(photo: PhotoItem, navController: NavController, viewModel: GalleryViewModel) {
+fun PhotoDetailScreen(photo: PhotoItem) {
+    val navController = (LocalActivity.current as MainActivity).navController
+    val viewModel = (LocalActivity.current as MainActivity).gallery
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Photo Details") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
+
                 actions = {
                     IconButton(onClick = {
                         viewModel.deletePhotoById(photo.id)
@@ -55,7 +55,7 @@ fun PhotoDetailScreen(photo: PhotoItem, navController: NavController, viewModel:
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(Color(0, 0, 0, 40))
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

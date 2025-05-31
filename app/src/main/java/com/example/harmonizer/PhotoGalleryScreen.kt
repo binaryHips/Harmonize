@@ -37,7 +37,9 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 
 
 @Composable
-fun PhotoGalleryScreen(navController: NavController, viewModel: GalleryViewModel) {
+fun PhotoGalleryScreen() {
+    val navController = (LocalActivity.current as MainActivity).navController
+    val viewModel = (LocalActivity.current as MainActivity).gallery
     val photos by viewModel.photos.collectAsState()
     
     LazyVerticalGrid(
@@ -54,7 +56,7 @@ fun PhotoGalleryScreen(navController: NavController, viewModel: GalleryViewModel
                         val encodedTitle = Uri.encode(photo.title)
                         val encodedDate = Uri.encode(photo.date)
                         //navController.navigate("detail/$encodedUrl/$encodedTitle/$encodedDate")
-                        navController.navigate("detail/${photo.id}")
+                        navController.navigate(Screen.PhotoVisualizer(photo.id))
 
                     },
                 horizontalAlignment = Alignment.CenterHorizontally

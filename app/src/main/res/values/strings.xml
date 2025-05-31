@@ -10,4 +10,9 @@
     <string name="loading_page_title" />
     <string name="please_wait_message">Please wait a few seconds</string>
     <string name="photo_gallery_title">Gallery</string>
+    <string name="harmonize_mode_option_automatic">Automatic</string>
+    <string name="harmonize_mode_option_choose_template">Choose template</string>
+    <string name="harmonize_mode_option_choose_template_angle"><![CDATA[Choose template & angle]]></string>
+    <string name="harmonize_send">Harmonize!</string>
+    <string name="harmonize_page_title">Harmonize</string>
 </resources>
