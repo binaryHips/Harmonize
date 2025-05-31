@@ -35,6 +35,12 @@ fun LoginPage(modifier: Modifier = Modifier) {
 
     val navController = (LocalActivity.current as MainActivity).navController
     val client = (LocalActivity.current as MainActivity).client
+
+    if (client.authToken != "") {
+        client.requestVerifyToken()
+    }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -15,4 +15,5 @@
     <string name="harmonize_mode_option_choose_template_angle"><![CDATA[Choose template & angle]]></string>
     <string name="harmonize_send">Harmonize!</string>
     <string name="harmonize_page_title">Harmonize</string>
+    <string name="authentication_failed">Authentication failed. Please log-in again</string>
 </resources>

@@ -29,9 +29,9 @@ def close_db(e=None):
 
 
 # returns false ifalready exits
-def _addToken(token, name):
+def _addToken(token: str, name):
     if token == "": return
-
+    token = token.strip()
     cur = get_db().cursor()
     cur.execute("""SELECT username
                    FROM TOKENS
@@ -57,10 +57,10 @@ def validateUser(name, password_hash):
                    WHERE username=?
                 """,
                 ([name]))
-    
-    if (not res): return False
 
     res = cur.fetchone()[0] #fetchone returns a row element with only the password
+
+    if (not res): return False
 
     print(" RESULTAT: ", res)
     print(" ENVOYE: ", password_hash)
@@ -85,15 +85,37 @@ def addUser(name, password_hash):
 
 def createNewToken(username):
     tokenLength = 32
-    token = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits + "&?!§%µ£$ç°") for _ in range(tokenLength))
+    token = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(tokenLength))
 
     while (not _addToken(token, username)):
 
-        token = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits + "&?!§%µ£$ç°") for _ in range(tokenLength))
+        token = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(tokenLength))
 
     close_db()
     return token
 
+def validateToken(token: str):
+    if token == "": return "Empty token", 510
+    token = token.strip()
+    
+    print("lengths? ", len(token))
+    test = "rXTpSmjuVApUwlX67Mj5eCIkSGOrAiOo"
+    for i in range(len(token)):
+        print("char ", i, " : ", test[i], " ",  token[i])
+
+    cur = get_db().cursor()
+    cur.execute("""SELECT username
+                   FROM TOKENS
+                   WHERE token=?
+                """,
+                ([token]))
+    res = cur.fetchone()
+    if (res): # if we have a resultl
+        cur.close()
+        return res[0], 200
+    
+    else:
+        return "", 510
 
 rebuildDatabase = False
 if __name__ == "__main__":

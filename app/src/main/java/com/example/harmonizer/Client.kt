@@ -47,11 +47,23 @@ private fun isPasswordLegit(input:String): Boolean{
 class Client {
     private val hostUrl:String = "78.194.190.31"
 
-    val port = 3000
+    private val port = 3000
 
     var authToken:String = ""
+        set(value) {
+            if (value == ""){
+                field = ""
+                return
+            }
+            field = value.filterNot { it == '"' } // somehow okhttp adds ' " ' around it.
+            val sharedPref = activity.getSharedPreferences("client", 0) ?: return // FIXME maybe not return...
+            with (sharedPref.edit()) {
+                putString("AUTH_TOKEN", authToken)
+                apply()
+            }
+        }
 
-    val client = OkHttpClient()
+    private val client = OkHttpClient()
 
     var activity: MainActivity // reference to current activity
 
@@ -162,11 +174,7 @@ class Client {
 
                     authToken = response.body?.string() ?: ""
                     response.close()
-                    val sharedPref = activity.getSharedPreferences("client", 0) ?: return
-                    with (sharedPref.edit()) {
-                        putString("AUTH_TOKEN", authToken)
-                        apply()
-                    }
+
                     activity.runOnUiThread {
                         Log.d("HTTP_CLIENT", "Connected with token : $authToken")
                         activity.navController.navigate(Screen.Main)
@@ -241,11 +249,6 @@ class Client {
 
                     authToken = response.body?.string() ?: ""
                     response.close()
-                    val sharedPref = activity.getSharedPreferences("client", 0) ?: return
-                    with (sharedPref.edit()) {
-                        putString("AUTH_TOKEN", authToken)
-                        apply()
-                    }
                     activity.runOnUiThread {
                         Log.d("HTTP_CLIENT", "Created account : $name")
                         Log.d("HTTP_CLIENT", "Connected with token : $authToken")
@@ -256,6 +259,55 @@ class Client {
                 override fun onFailure(call: Call, e: IOException) {
 
                     activity.runOnUiThread {
+                        activity.navController.navigate(Screen.Login)
+                        Toast.makeText(
+                            activity,
+                            activity.getString(R.string.error_message) + "\n" + e.message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    Log.d("HTTP_CLIENT", "HTTP response: ${e.message}")
+                }
+            }
+        )
+    }
+
+    fun requestVerifyToken(){
+
+        activity.navController.navigate(Screen.Loading)
+
+        sendGet(
+            "validateToken",
+            null,
+            object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code != 200 /*network authentication required*/){
+                        authToken = ""
+                        Log.d("HTTP_CLIENT", "reset token: $authToken")
+                        activity.runOnUiThread {
+                            activity.navController.navigate(Screen.Login)
+                            Toast.makeText(
+                                activity,
+                                activity.getString(R.string.authentication_failed),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        response.close()
+                        return
+                    }
+                    // else
+                    response.close()
+
+                    activity.runOnUiThread {
+                        Log.d("HTTP_CLIENT", "Connected with token : $authToken")
+                        activity.navController.navigate(Screen.Main)
+                    }
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    authToken = ""
+                    activity.runOnUiThread {
+
                         activity.navController.navigate(Screen.Login)
                         Toast.makeText(
                             activity,
@@ -300,13 +352,8 @@ class Client {
                     }
                     // else
 
-                    authToken = response.body?.string() ?: ""
                     response.close()
-                    val sharedPref = activity.getSharedPreferences("client", 0) ?: return
-                    with (sharedPref.edit()) {
-                        putString("AUTH_TOKEN", authToken)
-                        apply()
-                    }
+
                     activity.runOnUiThread {
                         Log.d("HTTP_CLIENT", "Harmonized image")
                         activity.navController.navigate(Screen.Main)
