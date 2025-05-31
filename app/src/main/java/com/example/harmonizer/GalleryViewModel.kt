@@ -84,4 +84,9 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     fun deletePhotoById(id: Int) {
         _photos.value = _photos.value.filterNot { it.id == id }
     }
+
+    fun refresh() {
+        loadLocalImages()
+    }
+
 }

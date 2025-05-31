@@ -29,7 +29,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import android.content.ContentValues
+import android.provider.MediaStore
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.harmonizer.ui.theme.HarmonizerTheme
+
 
 /*
 class MainActivity : ComponentActivity() {
@@ -74,23 +80,62 @@ fun AppNavigator() {
         factory = GalleryViewModelFactory(context.applicationContext as Application)
     )
 
-    NavHost(navController, startDestination = "gallery") {
-        composable("gallery") {
-            PhotoGalleryScreen(navController, viewModel)
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
+
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && photoUri != null) {
+            viewModel.refresh()
         }
-        composable(
-            "detail/{photoId}",
-            arguments = listOf(navArgument("photoId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val photoId = backStackEntry.arguments?.getInt("photoId") ?: return@composable
-            val photo = viewModel.photos.collectAsState().value.find { it.id == photoId }
-            if (photo != null) {
-                PhotoDetailScreen(photo, navController, viewModel)
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Main content: NavHost fills screen
+        NavHost(
+            navController,
+            startDestination = "gallery",
+            modifier = Modifier.fillMaxSize()
+        ) {
+            composable("gallery") {
+                PhotoGalleryScreen(navController, viewModel)
             }
+            composable(
+                "detail/{photoId}",
+                arguments = listOf(navArgument("photoId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val photoId = backStackEntry.arguments?.getInt("photoId") ?: return@composable
+                val photo = viewModel.photos.collectAsState().value.find { it.id == photoId }
+                if (photo != null) {
+                    PhotoDetailScreen(photo, navController, viewModel)
+                }
+            }
+        }
+
+        // Floating "Take Photo" button at the bottom center
+        Button(
+            onClick = {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, "photo_${System.currentTimeMillis()}.jpg")
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
+                }
+                val uri = context.contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+                )
+                photoUri = uri
+                if (uri != null) {
+                    takePictureLauncher.launch(uri)
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text("Take Photo")
         }
     }
 }
-
 
 
 
