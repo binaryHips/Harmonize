@@ -36,6 +36,7 @@ import android.provider.MediaStore
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModel
 import com.example.harmonizer.ui.theme.HarmonizerTheme
 
 
@@ -49,11 +50,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         client = Client(this)
-        gallery = GalleryViewModel(application)
+
         enableEdgeToEdge()
         setContent {
             HarmonizerTheme {
                 navController = rememberNavController()
+                gallery = viewModel(
+                    factory = GalleryViewModelFactory(application)
+                )
                 TopBar(navController)
             }
         }
