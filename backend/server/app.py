@@ -1,5 +1,12 @@
 from connexion import FlaskApp #pip ->  connexion, connexion[flask] et connexion[uvicorn]
 from pathlib import Path
+from connexion.datastructures import MediaTypeDict
+from connexion.validators import (
+    DefaultsJSONRequestBodyValidator,
+    FormDataValidator,
+    MultiPartFormDataValidator,
+)
+
 #in caseit crashes https://stackoverflow.com/questions/8688949/how-to-close-tcp-and-udp-ports-via-windows-command-line
 # launches the app from this script and sets up the test client in the next funcion
 testClient = False
@@ -26,10 +33,21 @@ def test_client(client):
     print(response.content.decode('UTF-8'))
 
 
+validator_map = {
+    "body": MediaTypeDict(
+        {
+            "*/*json": DefaultsJSONRequestBodyValidator,
+            "application/x-www-form-urlencoded": FormDataValidator,
+            "multipart/form-data": MultiPartFormDataValidator,
+        }
+    ),
+}
 
-app = FlaskApp(__name__)
 
-app.add_api("openapi.yaml")
+
+app = FlaskApp(__name__, validator_map=validator_map)
+
+app.add_api("openapi.yaml", validator_map=validator_map)
 
 
 

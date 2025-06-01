@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import android.net.Uri
+import android.provider.ContactsContract.Contacts.Photo
 import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import java.sql.Date
@@ -24,15 +25,29 @@ data class PhotoItem(
     val id: Int,
     val uri: Uri,
     val title: String,
-    val date: String
+    val date: String,
+    val variants: ArrayList<Uri> = ArrayList<Uri>()
 )
 
 class GalleryViewModel(application: Application) : AndroidViewModel(application) {
-    private val _photos = MutableStateFlow<List<PhotoItem>>(emptyList())
-    val photos: StateFlow<List<PhotoItem>> = _photos
+    private val _photos = MutableStateFlow<MutableList<PhotoItem>>(ArrayList<PhotoItem>())
+    val photos: StateFlow<MutableList<PhotoItem>> = _photos
 
     init {
         loadLocalImages()
+    }
+    /*
+    private var nextPhotoIndex:Int = 0
+    fun getNextImageIndex(): Int{
+        return nextPhotoIndex++
+    }
+
+    fun addImage(photo: PhotoItem){
+        _photos.value.add(photo)
+    }
+    */
+    fun getFromUriOrNull(uri:Uri): PhotoItem?{ // returns the photo object if we already have it here
+        return _photos.value.find { it.uri == uri }
     }
 
     private fun loadLocalImages() {
@@ -77,13 +92,14 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
                 )
                 count++
             }
+            //nextPhotoIndex = count+1
         }
 
         _photos.value = imageList
     }
 
     fun deletePhotoById(id: Int) {
-        _photos.value = _photos.value.filterNot { it.id == id }
+        _photos.value.removeAll { it.id == id }
     }
 
     fun refresh() {

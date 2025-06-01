@@ -1,7 +1,7 @@
 package com.example.harmonizer
 
-import android.R.attr.password
-import android.R.attr.path
+import android.content.ContentResolver
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import okhttp3.Call
@@ -9,16 +9,41 @@ import okhttp3.Callback
 import okhttp3.FormBody
 import okhttp3.HttpUrl
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
+import okio.BufferedSink
 import okio.IOException
+import okio.source
 import java.io.File
+import java.io.InputStream
 import java.math.BigInteger
 import java.security.MessageDigest
+
+// https://commonsware.com/blog/2020/07/05/multipart-upload-okttp-uri.html
+private class InputStreamRequestBody(
+    private val contentType: MediaType,
+    private val contentResolver: ContentResolver,
+    private val uri: Uri
+) : RequestBody() {
+    override fun contentType() = contentType
+
+    override fun contentLength(): Long = -1
+
+    @Throws(IOException::class)
+    override fun writeTo(sink: BufferedSink) {
+        val input = contentResolver.openInputStream(uri)
+
+        input?.use { sink.writeAll(it.source()) }
+            ?: throw IOException("Could not open $uri")
+    }
+}
+
 
 
 private fun md5Hash(str: String): String {
@@ -117,7 +142,9 @@ class Client {
         if (body != null) requestBuilder.post(body)
         else requestBuilder.post(FormBody.Builder().build()) // create an empty one
 
-        client.newCall(requestBuilder.build()).enqueue(callbackObject)
+        val request = requestBuilder.build()
+        Log.d("HTTP_CLIENT", (request.body as MultipartBody).size.toString())
+        client.newCall(request).enqueue(callbackObject)
     }
 
     // request functions
@@ -324,16 +351,11 @@ class Client {
 
     fun requestImageHarmonization(image:PhotoItem, template:String? = null, angle:Float?){
 
-        activity.navController.navigate(Screen.Loading)
-
-        val file = File(" ")
-
-        val body: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart(
-                "image",
-                file.name,
-                file.asRequestBody()
-            )
+        val mediaType = "image/jpeg".toMediaType()
+        val contentPart = InputStreamRequestBody(mediaType, activity.contentResolver, image.uri)
+        val body = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", "file", contentPart)
             .build()
 
         val params = listOfNotNull(
@@ -341,8 +363,10 @@ class Client {
             ("angle" to angle.toString()).takeUnless { angle == null },
         ).toMap()
 
+        activity.navController.navigate(Screen.Loading)
+
         sendPost(
-            "createAccount",
+            "harmonize",
             params,
             body,
             object : Callback {
@@ -380,7 +404,7 @@ class Client {
                             Toast.LENGTH_LONG
                         ).show()
                     }
-                    Log.d("HTTP_CLIENT", "HTTP response: ${e.message}")
+                    Log.d("HTTP_CLIENT", "Failure: ${e.message}")
                 }
             }
         )

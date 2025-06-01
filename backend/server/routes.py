@@ -2,6 +2,7 @@
 import db
 import PIL
 import harmonize as hrm
+from connexion import request
 # routes
 
 def authenticate(username: str, password_hash: str):
@@ -27,11 +28,12 @@ def createAccount(username: str, password_hash: str):
 
 
 userImagesPath = "./backend/"
-def harmonize(image, token:str, template:str = None, angle:float = None):
-    
+async def harmonize(image,token:str, template:str = None, angle:float = None, **kwargs):
+
+    return
     user = db._getUserFromToken(token)
     if not user : return "Invalid token", 510
-    pilImage = PIL.Image.open(image) # image is a werkzeug.FileStorage. But it converts ! that's why I like python
+    pilImage = PIL.Image.open(file) # image is a werkzeug.FileStorage. But it converts ! that's why I like python
 
     path = userImagesPath + user + "/"
     resImage:PIL.Image = hrm.recolor_image(pilImage, template, angle)

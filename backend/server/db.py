@@ -80,8 +80,6 @@ def validateUser(name, password_hash):
 
     if (not res): return False
 
-    print(" RESULTAT: ", res)
-    print(" ENVOYE: ", password_hash)
     close_db()
     return res == password_hash
 
@@ -115,11 +113,6 @@ def createNewToken(username):
 def validateToken(token: str):
     if token == "": return "Empty token", 510
     token = token.strip()
-    
-    print("lengths? ", len(token))
-    test = "rXTpSmjuVApUwlX67Mj5eCIkSGOrAiOo"
-    for i in range(len(token)):
-        print("char ", i, " : ", test[i], " ",  token[i])
 
     cur = get_db().cursor()
     cur.execute("""SELECT username

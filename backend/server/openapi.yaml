@@ -1,4 +1,4 @@
-openapi: "3.0.0"
+openapi: "3.0.3"
 info:
   title: Harmonizer
   version: 0.0.1
@@ -76,12 +76,15 @@ paths:
           schema:
             type: number
 
-      requestBody:
+      requestBody:  
         content:
-          multipart/form-data:
+          multipart/form-data: # means: content consists of multiple parts with a separator.
             schema:
               type: object
               properties:
-                image:
-                  type: string
+                imageID: # the metadata you want to send with the image
+                  type: integer
+                  example: 103983
+                image: # the actual image file
+                  type: string 
                   format: binary
