@@ -53,3 +53,35 @@ paths:
           schema:
             type: string
 
+  /harmonize:
+    post:
+      operationId: routes.harmonize
+      responses:
+        '200':
+          description: "harmonisation d'une image"
+      parameters:
+        - name: token
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: template
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: angle
+          in: query
+          required: false
+          schema:
+            type: number
+
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary

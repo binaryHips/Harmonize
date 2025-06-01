@@ -48,6 +48,24 @@ def _addToken(token: str, name):
 
         cur.close()
         return True
+    
+def _getUserFromToken(token: str):
+    if token == "": return
+    token = token.strip()
+    cur = get_db().cursor()
+    cur.execute("""SELECT username
+                   FROM TOKENS
+                   WHERE token=?
+                """,
+                ([token]))
+    res = cur.fetchone()
+    if ( res ): # if we have a resultl
+        cur.close()
+        return res[0]
+    
+    cur.close()
+    return None
+    
 
 # endpoint functions  
 def validateUser(name, password_hash):

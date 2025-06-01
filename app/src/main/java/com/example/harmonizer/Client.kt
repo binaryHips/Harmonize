@@ -1,6 +1,7 @@
 package com.example.harmonizer
 
-import android.media.Image
+import android.R.attr.password
+import android.R.attr.path
 import android.util.Log
 import android.widget.Toast
 import okhttp3.Call
@@ -321,20 +322,29 @@ class Client {
         )
     }
 
-    fun requestImageHarmonization(image:PhotoItem){
+    fun requestImageHarmonization(image:PhotoItem, template:String? = null, angle:Float?){
 
         activity.navController.navigate(Screen.Loading)
 
         val file = File(" ")
 
-        val body = file.asRequestBody()
+        val body: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart(
+                "image",
+                file.name,
+                file.asRequestBody()
+            )
+            .build()
 
+        val params = listOfNotNull(
+            ("template" to template.toString()).takeUnless { template == null }, // tostring on a string? because with a normal cast the takeUnless freaks off
+            ("angle" to angle.toString()).takeUnless { angle == null },
+        ).toMap()
 
         sendPost(
             "createAccount",
-            null,
-            body
-            ,
+            params,
+            body,
             object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     if (response.code != 200 /*network authentication required*/){
