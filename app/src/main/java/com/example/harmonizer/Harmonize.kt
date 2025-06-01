@@ -11,7 +11,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -71,6 +70,7 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
     val client = (LocalActivity.current as MainActivity).client
 
     var selectedImage: PhotoItem? by remember { mutableStateOf(null)}
+    var temp_uri:Uri? = null // set when photo creates res
 
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         // Callback is invoked after the user selects a media item or closes the
@@ -109,13 +109,17 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
     val navController = (LocalActivity.current as MainActivity).navController
     val context = LocalContext.current
 
-    var photoUri by remember { mutableStateOf<Uri?>(null) }
-
     val takePictureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
             // Optional: show a Toast or navigate to gallery
+            selectedImage = PhotoItem(
+                0,
+                temp_uri!!,
+                "",
+                ""
+            )
             Toast.makeText(context, "Photo saved!", Toast.LENGTH_SHORT).show()
         }
     }
@@ -171,7 +175,24 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
                         Text(stringResource(R.string.select_image), fontSize = 18.sp)
                     }
                     Button(
-                        onClick = {  },
+                        onClick = {
+                            val contentValues = ContentValues().apply {
+                            put(MediaStore.Images.Media.DISPLAY_NAME, "photo_${System.currentTimeMillis()}.jpg")
+                            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
+                        }
+                            val uri = context.contentResolver.insert(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+                            )
+                            if (uri != null) {
+                                takePictureLauncher.launch(uri)
+                                temp_uri = uri
+                                Log.d("HARMONIZE", "Selected image $uri")
+
+                            }
+
+                                  },
+
                         modifier = Modifier.padding(bottom = 32.dp)
                     ) {
                         Text(stringResource(R.string.new_photo), fontSize = 18.sp)
@@ -266,26 +287,6 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
                     Text(stringResource(R.string.harmonize_send), fontSize = 18.sp)
                 }
             }
-        }
-
-        Button(
-            onClick = {
-                val contentValues = ContentValues().apply {
-                    put(MediaStore.Images.Media.DISPLAY_NAME, "photo_${System.currentTimeMillis()}.jpg")
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                    put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
-                }
-                val uri = context.contentResolver.insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
-                )
-                photoUri = uri
-                if (uri != null) takePictureLauncher.launch(uri)
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        ) {
-            Text("Take Photo")
         }
     }
 }
