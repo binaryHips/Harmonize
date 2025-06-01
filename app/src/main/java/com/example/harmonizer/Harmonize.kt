@@ -1,8 +1,14 @@
 package com.example.harmonizer
 
+import android.content.ContentValues
+import android.net.Uri
+import android.provider.MediaStore
+import android.widget.Toast
 import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -59,7 +66,7 @@ import kotlin.math.round
 @Composable
 fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null) {
 
-    val navController = (LocalActivity.current as MainActivity).navController
+    //val navController = (LocalActivity.current as MainActivity).navController
     val gallery = (LocalActivity.current as MainActivity).gallery
     val client = (LocalActivity.current as MainActivity).client
 
@@ -99,6 +106,19 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
 
     var anglePosition by remember { mutableFloatStateOf(0f) }
 
+    val navController = (LocalActivity.current as MainActivity).navController
+    val context = LocalContext.current
+
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
+
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            // Optional: show a Toast or navigate to gallery
+            Toast.makeText(context, "Photo saved!", Toast.LENGTH_SHORT).show()
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -246,6 +266,26 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
                     Text(stringResource(R.string.harmonize_send), fontSize = 18.sp)
                 }
             }
+        }
+
+        Button(
+            onClick = {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, "photo_${System.currentTimeMillis()}.jpg")
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
+                }
+                val uri = context.contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+                )
+                photoUri = uri
+                if (uri != null) takePictureLauncher.launch(uri)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text("Take Photo")
         }
     }
 }
