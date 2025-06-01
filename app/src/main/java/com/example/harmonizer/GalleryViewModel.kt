@@ -32,31 +32,23 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     val photos: StateFlow<List<PhotoItem>> = _photos
 
     init {
-        loadLocalImages("Pictures/Harmonizer")
+        loadLocalImages()
     }
 
-    private fun loadLocalImages(folder: String) {
+    private fun loadLocalImages() {
         val context = getApplication<Application>().applicationContext
         val imageList = mutableListOf<PhotoItem>()
-
         val projection = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.DATE_TAKEN,
-            MediaStore.Images.Media.RELATIVE_PATH
+            MediaStore.Images.Media.DATE_TAKEN
         )
 
-        // Only get images from the given folder (e.g. "Pictures/MyAppPhotos/")
-        val selection = "${MediaStore.Images.Media.RELATIVE_PATH} LIKE ?"
-        val selectionArgs = arrayOf("%$folder%") // e.g., "%Pictures/MyAppPhotos%"
-
         val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
-
         val query = context.contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             projection,
-            selection,
-            selectionArgs,
+            null, null,
             sortOrder
         )
 
@@ -94,8 +86,10 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
         _photos.value = _photos.value.filterNot { it.id == id }
     }
 
+
+
     fun refresh() {
-        loadLocalImages("Pictures/Harmonizer")
+        //loadLocalImages("Pictures/Harmonizer")
     }
 
 }
