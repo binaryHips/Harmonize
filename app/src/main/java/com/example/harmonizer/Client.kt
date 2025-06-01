@@ -143,7 +143,6 @@ class Client {
         else requestBuilder.post(FormBody.Builder().build()) // create an empty one
 
         val request = requestBuilder.build()
-        Log.d("HTTP_CLIENT", (request.body as MultipartBody).size.toString())
         client.newCall(request).enqueue(callbackObject)
     }
 

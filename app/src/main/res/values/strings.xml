@@ -18,4 +18,6 @@
     <string name="authentication_failed">Authentication failed. Please log-in again</string>
     <string name="select_image">Select</string>
     <string name="new_photo">New photo</string>
+    <string name="photscreen_harmonize">harmonize</string>
+    <string name="photoscreen_delete">Delete</string>
 </resources>

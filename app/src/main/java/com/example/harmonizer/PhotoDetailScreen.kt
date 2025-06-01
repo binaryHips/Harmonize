@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -73,10 +74,12 @@ fun PhotoDetailScreen(photo: PhotoItem) {
             )
 
             Button(
-                onClick = { /* Handle re-harmonize */ },
+                onClick = {
+                    navController.navigate(Screen.Harmonize(photo.id))
+                },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
-                Text("Re-harmonize", fontSize = 18.sp)
+                Text(stringResource(R.string.photscreen_harmonize), fontSize = 18.sp)
             }
 
             Button(
@@ -86,7 +89,7 @@ fun PhotoDetailScreen(photo: PhotoItem) {
                 },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
-                Text("Delete", fontSize = 18.sp)
+                Text(stringResource(R.string.photoscreen_delete), fontSize = 18.sp)
             }
 
 

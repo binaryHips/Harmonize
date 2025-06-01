@@ -34,7 +34,7 @@ import com.example.harmonizer.ui.theme.HarmonizerTheme
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
     val navController = (LocalActivity.current as MainActivity).navController
-
+    val client = (LocalActivity.current as MainActivity).client
     Box(
         modifier = Modifier
         .fillMaxSize()
@@ -72,7 +72,11 @@ fun MainPage(modifier: Modifier = Modifier) {
                 }
 
                 Button(
-                    onClick = { /* Handle account creation */ },
+                    onClick = {
+                        client.authToken = ""
+                        navController.navigate(Screen.Login)
+
+                    },
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     Text("Account Settings", fontSize = 18.sp)

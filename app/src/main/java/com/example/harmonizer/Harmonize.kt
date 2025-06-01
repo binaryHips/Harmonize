@@ -69,7 +69,7 @@ fun HarmonizePage(modifier: Modifier = Modifier, chosenPhoto: PhotoItem? = null)
     val gallery = (LocalActivity.current as MainActivity).gallery
     val client = (LocalActivity.current as MainActivity).client
 
-    var selectedImage: PhotoItem? by remember { mutableStateOf(null)}
+    var selectedImage: PhotoItem? by remember { mutableStateOf(chosenPhoto)}
     var temp_uri:Uri? = null // set when photo creates res
 
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
