@@ -29,17 +29,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.harmonizer.ui.theme.HarmonizerTheme
+import android.content.ContentValues
+import android.net.Uri
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
     val navController = (LocalActivity.current as MainActivity).navController
+    val context = LocalContext.current
 
-    Box(
-        modifier = Modifier
-        .fillMaxSize()
-    ) {
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
 
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            // Optional: show a Toast or navigate to gallery
+            Toast.makeText(context, "Photo saved!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -49,9 +64,6 @@ fun MainPage(modifier: Modifier = Modifier) {
         ) {
             Spacer(modifier = Modifier.height(5.dp))
 
-
-
-
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
                     onClick = { navController.navigate(Screen.Harmonize()) },
@@ -60,15 +72,13 @@ fun MainPage(modifier: Modifier = Modifier) {
                     Text("New Harmonization", fontSize = 18.sp)
                 }
 
-
-
                 Button(
                     onClick = {
                         navController.navigate(Screen.PhotoGallery)
                     },
                     modifier = Modifier.padding(bottom = 86.dp)
                 ) {
-                    Text(" Harmonizer Gallery  ", fontSize = 18.sp)
+                    Text("Harmonizer Gallery", fontSize = 18.sp)
                 }
 
                 Button(
@@ -79,8 +89,30 @@ fun MainPage(modifier: Modifier = Modifier) {
                 }
             }
         }
+
+        // Take Photo Button at Bottom Center
+        Button(
+            onClick = {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, "photo_${System.currentTimeMillis()}.jpg")
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
+                }
+                val uri = context.contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+                )
+                photoUri = uri
+                if (uri != null) takePictureLauncher.launch(uri)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text("Take Photo")
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
