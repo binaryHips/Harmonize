@@ -59,6 +59,7 @@ class MainActivity : ComponentActivity() {
                     factory = GalleryViewModelFactory(application)
                 )
                 TopBar(navController)
+
             }
         }
     }
@@ -78,13 +79,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             //PhotoGalleryScreen()
             //AppNavigator()
-            //LoginPage()
+            LoginPage()
 
 
         }
     }
-}*/
-
+}
+*/
 
 
 
